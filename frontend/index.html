@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Phishing Website Detector</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-a"></div>
+  <div class="bg-glow bg-glow-b"></div>
+
+  <nav class="navbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <span class="brand-text">AI PHISHING <span class="brand-accent">DETECTOR</span></span>
+    </div>
+  </nav>
+
+  <main class="page">
+
+    <!-- ============ HERO ============ -->
+    <header class="hero">
+      <div class="hero-badge">ML-POWERED · URL ANALYSIS</div>
+      <h1><span class="gradient-text">AI Phishing Website Detector</span></h1>
+      <p class="hero-sub">
+        Instantly check any URL or domain using a machine learning model trained
+        locally on real phishing and legitimate URL data. Get a trust score and
+        an explainable phishing verdict — no signup, no external services contacted.
+      </p>
+
+      <form id="scan-form" class="scan-form">
+        <input
+          id="url-input"
+          type="text"
+          placeholder="https://suspicious-site.com/login"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="submit" id="scan-btn">
+          <span class="btn-label">Check URL</span>
+        </button>
+      </form>
+    </header>
+
+    <!-- ============ RESULT (dynamic) ============ -->
+    <section id="result" class="result-panel hidden">
+      <div id="verdict-banner" class="verdict-banner">
+        <span id="verdict-icon" class="verdict-icon"></span>
+        <div class="verdict-banner-copy">
+          <span id="verdict-label" class="verdict-label"></span>
+          <span id="verdict-sub" class="verdict-sub"></span>
+        </div>
+      </div>
+
+      <div class="score-row">
+        <div class="score-card">
+          <span class="score-card-label">Trust Score</span>
+          <div class="score-big">
+            <span id="score-value">–</span>
+          </div>
+          <span class="score-outof">out of 100</span>
+          <div class="score-track">
+            <div id="score-fill" class="score-fill"></div>
+          </div>
+        </div>
+        <div class="detection-card">
+          <span class="detection-card-label">Detection Method</span>
+          <div class="detection-method">
+            <span class="method-dot"></span>
+            Local ML model — no external threat-database lookups
+          </div>
+          <span id="verdict-url" class="verdict-url"></span>
+        </div>
+      </div>
+
+      <div class="signals-section">
+        <h2>Heuristic Signals</h2>
+        <div id="signals-grid" class="signals-grid"></div>
+      </div>
+
+      <p class="disclaimer">
+        <strong>Note:</strong> this tool analyzes URL structure only. It does not
+        query live threat databases or fetch the destination page. A clean
+        result is not a guarantee of safety.
+      </p>
+    </section>
+
+    <div id="error" class="error hidden"></div>
+
+    <!-- ============ HOW TO USE ============ -->
+    <section class="how-it-works">
+      <h2 class="section-title">How to Use the AI Phishing Website Detector</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">01</span>
+          <p>Paste a full URL or bare domain — with or without <code>https://</code></p>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <p>Click <strong>Check URL</strong>. The check runs entirely on this server — your browser never contacts the destination site</p>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <p>Review the trust score and the heuristic signal breakdown to understand why the model reached its verdict</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ UNDERSTANDING YOUR RESULTS ============ -->
+    <section class="understanding">
+      <h2 class="section-title">Understanding Your Results</h2>
+
+      <div class="u-block">
+        <h3>Overall Verdict</h3>
+        <ul class="u-list">
+          <li><strong>No red flags detected</strong> — the URL's structure closely matches patterns seen in legitimate training data</li>
+          <li><strong>Phishing patterns detected</strong> — the URL's structure closely matches patterns seen in phishing training data</li>
+        </ul>
+      </div>
+
+      <div class="u-block">
+        <h3>Trust Score (0–100)</h3>
+        <p class="u-text">Derived directly from the model's prediction confidence — how closely this URL's structure matches legitimate vs. phishing patterns learned during training.</p>
+        <div class="score-bands">
+          <span class="band band-danger">Dangerous · 0–49</span>
+          <span class="band band-warn">Suspicious · 50–74</span>
+          <span class="band band-safe">Safe · 75–100</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW OUR SYSTEM WORKS ============ -->
+    <section class="understanding">
+      <h2 class="section-title">How Our System Works</h2>
+      <div class="u-block">
+        <p class="u-text">
+          The core of this project is a <strong>Random Forest classifier</strong> — an ensemble
+          machine learning model made up of 200 decision trees — built with scikit-learn.
+          It was trained on the <strong>PhiUSIIL Phishing URL Dataset</strong>, expanded with
+          real domains from the <strong>Tranco top-sites ranking</strong> and additional
+          synthetically generated legitimate URL patterns, to correct formatting bias found
+          during development. The final model was validated on held-out test data with
+          98.93% accuracy.
+        </p>
+        <p class="u-text">
+          Every prediction is generated locally, in well under a second, purely from the
+          text of the URL — 23 structural features are extracted (length, character
+          composition, HTTPS usage, subdomain depth, entropy, and more) and passed to the
+          trained model.
+        </p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h3>This Tool</h3>
+          <ul class="u-list">
+            <li>Predicts from URL structure using a trained ML model</li>
+            <li>Works instantly, fully offline, no external API calls</li>
+            <li>Can flag <em>never-before-seen</em> phishing patterns</li>
+            <li>Cannot detect brand-new sites hosted on ambiguous-but-legitimate patterns (see Limitations below)</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h3>Reputation-Based Checkers</h3>
+          <ul class="u-list">
+            <li>Look up the URL against live threat-intelligence databases</li>
+            <li>Follow redirect chains and check domain registration age</li>
+            <li>Very reliable for <em>already-known</em> threats</li>
+            <li>Can miss brand-new phishing sites that haven't been reported yet</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HEURISTIC SIGNALS TABLE ============ -->
+    <section class="understanding">
+      <h2 class="section-title">Heuristic Signals Reference</h2>
+      <table class="signals-table">
+        <thead>
+          <tr><th>Signal</th><th>What it checks</th><th>Why it matters</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>HTTPS</td><td>Whether the URL uses HTTPS or plain HTTP</td><td>HTTP-only connections are a baseline risk flag for any site handling data</td></tr>
+          <tr><td>TLD risk</td><td>Top-level domain reputation (.xyz, .top, .tk...)</td><td>These TLDs are heavily over-represented in phishing campaigns</td></tr>
+          <tr><td>Shortener</td><td>Known URL shortener services (bit.ly, tinyurl...)</td><td>Shorteners hide the real destination and prevent pre-click inspection</td></tr>
+          <tr><td>Non-ASCII chars</td><td>Unicode / international characters in the domain</td><td>Used in homograph attacks to visually mimic legitimate domains</td></tr>
+          <tr><td>IP hostname</td><td>Whether the host is a raw IP address</td><td>Legitimate sites use domain names, not raw IPs</td></tr>
+          <tr><td>Subdomain depth</td><td>Number of subdomain levels</td><td>Deep nesting can mimic trusted brands (paypal.com.malicious.xyz)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ EXAMPLES ============ -->
+    <section class="understanding">
+      <h2 class="section-title">Example Phishing URL Patterns</h2>
+      <p class="u-text">
+        These are illustrative, synthetic examples used for testing — not live
+        links, and not real reported phishing sites.
+      </p>
+      <div class="example-list">
+        <div class="example-item">
+          <code>http://paypal-secure-verify-account.com/login</code>
+          <span>Brand name + suspicious keywords stacked in the domain</span>
+        </div>
+        <div class="example-item">
+          <code>http://192.168.45.12/wp-admin/verify</code>
+          <span>Raw IP address instead of a domain name</span>
+        </div>
+        <div class="example-item">
+          <code>https://bit.ly/3xK9pQz</code>
+          <span>URL shortener hiding the real destination</span>
+        </div>
+        <div class="example-item">
+          <code>http://secure-bankofamerica-update.xyz/confirm</code>
+          <span>Brand impersonation combined with a high-risk TLD</span>
+        </div>
+        <div class="example-item">
+          <code>http://amaz0n-account-suspended.com/verify?user=12345</code>
+          <span>Character substitution ("0" for "o") and urgency keywords</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STATS ============ -->
+    <section class="stats-section">
+      <h2 class="section-title">Why You Should Check Links Before Clicking</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-num">3.8M+</span>
+          <span class="stat-label">Phishing attacks recorded globally in 2025</span>
+          <span class="stat-source">Source: APWG Phishing Activity Trends Report</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">16%</span>
+          <span class="stat-label">Of data breaches begin with a phishing attack</span>
+          <span class="stat-source">Source: IBM Cost of a Data Breach, 2025</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">8.3B+</span>
+          <span class="stat-label">Email-based phishing threats detected by Microsoft in Q1 2026 alone</span>
+          <span class="stat-source">Source: Microsoft Email Threat Landscape, Q1 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="understanding">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+
+      <details class="faq-item">
+        <summary>How do I check if a link is safe?</summary>
+        <p>Paste the full URL or domain into the checker above and click Check URL. The analysis runs locally and returns a trust score and a heuristic signal breakdown within a second.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is a clean result a guarantee the site is safe?</summary>
+        <p>No. This tool analyzes URL structure only — it does not check live threat databases or fetch the destination page. Treat it as one useful signal, not a final answer.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What are the signs of a phishing URL?</summary>
+        <p>HTTP instead of HTTPS, a raw IP address as the host, deep or misleading subdomains, URL shorteners, risky top-level domains (.xyz, .tk, .top), and suspicious keywords like "verify," "secure," or "login" appearing where they shouldn't.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What is a phishing website?</summary>
+        <p>A phishing website is a fraudulent site designed to imitate a legitimate one — often a bank, email provider, or well-known brand — in order to trick visitors into entering credentials, financial details, or personal information.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if I click a phishing link accidentally?</summary>
+        <p>Simply clicking a link is usually not enough to compromise you, but the destination page may try to collect credentials you enter, or in some cases exploit browser vulnerabilities to install malware. The real risk begins if you enter information or download/run a file.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What should I do if I've already clicked a phishing link?</summary>
+        <p>Do not enter any information on the page. If you already entered a password, change it immediately on the real site and on any other account reusing that password. Run a malware scan if you downloaded or opened anything. Monitor financial accounts if payment details were entered, and report the link to your email provider or IT/security team.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How is this different from other phishing checkers?</summary>
+        <p>Tools like commercial phishing checkers primarily look up a URL against live threat-intelligence databases and follow redirect chains. This project instead predicts from the URL's structure alone, using a locally trained machine learning model — no external services, works offline, but can be less certain on structurally ambiguous URLs. See "How Our System Works" above for a full comparison.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Where does this system fail?</summary>
+        <p>The model can struggle with URLs that are structurally ambiguous — for example, a personal blog on a free hosting platform can look identical, in URL structure alone, to a phishing site hosted the same way. It can also be less confident on unusual-but-legitimate patterns not well represented in training data, such as certain numeric IDs or uncommon path structures. These are documented, known limitations of any lexical-only (text-based) detection approach.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What upgrades are planned for the future?</summary>
+        <p>Planned improvements include incorporating domain age (via RDAP lookup), optional integration with public threat-intelligence feeds for a hybrid verdict, browser extension support, and continued dataset expansion to reduce remaining false positives on unusual-but-legitimate URL patterns.</p>
+      </details>
+    </section>
+
+    <!-- ============ TOOLS USED ============ -->
+    <section class="understanding">
+      <h2 class="section-title">Tools & Technologies Used</h2>
+      <div class="tools-grid">
+        <span class="tool-chip">Python</span>
+        <span class="tool-chip">scikit-learn</span>
+        <span class="tool-chip">pandas</span>
+        <span class="tool-chip">Flask</span>
+        <span class="tool-chip">HTML / CSS / JavaScript</span>
+        <span class="tool-chip">PhiUSIIL Dataset</span>
+        <span class="tool-chip">Tranco Top Sites List</span>
+        <span class="tool-chip">Git & GitHub</span>
+        <span class="tool-chip">VS Code</span>
+      </div>
+    </section>
+
+    <!-- ============ TEAM ============ -->
+    <section class="understanding">
+      <h2 class="section-title">Project Team</h2>
+      <div class="team-grid">
+        <div class="team-card">Mithlesh Sah</div>
+        <div class="team-card">Rhytham B.C.</div>
+        <div class="team-card">Alin Singh</div>
+        <div class="team-card">Abhishek Kumar Sah</div>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+      <div class="social-row">
+        <a href="#" class="social-icon" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="Facebook" title="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.58.01 4.85.07 1.17.05 1.97.24 2.43.4a4.9 4.9 0 0 1 1.77 1.15 4.9 4.9 0 0 1 1.15 1.77c.16.46.35 1.26.4 2.43.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.24 1.97-.4 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.46.16-1.26.35-2.43.4-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.97-.24-2.43-.4a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.16-.46-.35-1.26-.4-2.43C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85c.05-1.17.24-1.97.4-2.43a4.9 4.9 0 0 1 1.15-1.77A4.9 4.9 0 0 1 5.59 1.8c.46-.16 1.26-.35 2.43-.4C9.29 1.34 9.67 1.33 12 1.33zm0 1.62c-3.15 0-3.5.01-4.74.07-1 .05-1.55.21-1.9.35a3.28 3.28 0 0 0-1.2.78 3.28 3.28 0 0 0-.78 1.2c-.14.35-.3.9-.35 1.9-.06 1.24-.07 1.59-.07 4.74s.01 3.5.07 4.74c.05 1 .21 1.55.35 1.9.15.4.35.75.78 1.2.35.35.7.6 1.2.78.35.14.9.3 1.9.35 1.24.06 1.59.07 4.74.07s3.5-.01 4.74-.07c1-.05 1.55-.21 1.9-.35a3.28 3.28 0 0 0 1.2-.78c.35-.35.6-.7.78-1.2.14-.35.3-.9.35-1.9.06-1.24.07-1.59.07-4.74s-.01-3.5-.07-4.74c-.05-1-.21-1.55-.35-1.9a3.28 3.28 0 0 0-.78-1.2 3.28 3.28 0 0 0-1.2-.78c-.35-.14-.9-.3-1.9-.35-1.24-.06-1.59-.07-4.74-.07zm0 4.13a4.05 4.05 0 1 1 0 8.1 4.05 4.05 0 0 1 0-8.1zm0 1.62a2.43 2.43 0 1 0 0 4.86 2.43 2.43 0 0 0 0-4.86zm5.16-1.8a.95.95 0 1 1-1.9 0 .95.95 0 0 1 1.9 0z"/></svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="YouTube" title="YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.56A3.02 3.02 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14C4.5 20.5 12 20.5 12 20.5s7.5 0 9.38-.56a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="X" title="X">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.5h3.3l-7.2 8.23L23 21.5h-6.6l-5.17-6.77-5.92 6.77H2l7.7-8.8L1.5 2.5h6.77l4.67 6.2 5.3-6.2zm-1.16 17h1.83L7.02 4.42H5.06L17.08 19.5z"/></svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.42c.58.1.79-.25.79-.56v-2.1c-3.2.7-3.88-1.4-3.88-1.4-.52-1.34-1.28-1.7-1.28-1.7-1.04-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.3-5.26-1.28-5.26-5.7 0-1.26.45-2.28 1.19-3.09-.12-.3-.52-1.5.11-3.13 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.63.24 2.83.12 3.13.74.81 1.18 1.83 1.18 3.09 0 4.43-2.7 5.4-5.28 5.68.42.36.78 1.08.78 2.18v3.23c0 .31.2.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+        </a>
+      </div>
+      <p class="footer-note">Random Forest · 23 lexical URL features · trained locally · no external APIs</p>
+      <p class="footer-note footer-small">Social links are placeholders — update with your actual profile URLs.</p>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
